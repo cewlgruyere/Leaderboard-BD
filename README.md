@@ -1,6 +1,7 @@
-# Ballsdex-leaderboard-pack-v3
+# Leaderboard-BD
 This is my first package for ballsdex v3, so its pretty small. Its pretty handy tho :3
 If you want the old UI that doesnt use components V2, pin the release by adding @v1.0.1 after .git
+also the v2 version is on the branch "V2"
 ## Installation
 1. Put this into `config/extra.toml`
    ```toml
