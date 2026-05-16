@@ -4,10 +4,9 @@ This is my first package for ballsdex v3, so its pretty small. Its pretty handy 
 1. Put this into `config/extra.toml`
    ```toml
    [[ballsdex.packages]]
-   location = "git+https://github.com/ErlandArchives/Ballsdex-leaderboard-pack-v3.git"
+   location = "git+https://github.com/cewlgruyere/Leaderboard-BD.git"
    path = "leaderboard"
    enabled = true
-   editable = false
    ```
 2. Rebuild the bot.
    do:  
