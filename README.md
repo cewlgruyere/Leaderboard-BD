@@ -1,5 +1,6 @@
 # Ballsdex-leaderboard-pack-v3
 This is my first package for ballsdex v3, so its pretty small. Its pretty handy tho :3
+If you want the old UI that doesnt use components V2, pin the release by adding @v1.0.1 after .git
 ## Installation
 1. Put this into `config/extra.toml`
    ```toml

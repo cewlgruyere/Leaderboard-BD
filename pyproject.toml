@@ -1,8 +1,8 @@
 [project]
 name = "leaderboard"
-version = "1.0.1"
+version = "1.0.2"
 
-description = "Leaderboard extension for BallsDex"
+description = "Leaderboard extension for BallsDex created by gruyere"
 
 license = "Apache-2.0"
 license-files = ["LICENSE"]
