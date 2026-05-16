@@ -57,7 +57,10 @@ class InstallerConfig:
 
     name = NAME
     color = COLOR
-
+    appearance = {
+        "banner": "https://media.discordapp.net/attachments/1422297736899854436/1505334564405379122/tuff.gif?ex=6a0a3f8f&is=6a08ee0f&hm=2e9166332cb36f9fea13b4d930bfc60af50f81da8ece42ff1613fb8346e3939d&=",
+        "logo": "https://media.discordapp.net/attachments/1422297736899854436/1505334563914780672/ERL_LOGO.png?ex=6a0a3f8f&is=6a08ee0f&hm=f04d8d5e3b616d7805ce14ce2d8cbe536a6a5c46920bb683a97d0cfb6a9e6d1c&=&format=webp&quality=lossless",
+    }
 
 @dataclass
 class Logger:
