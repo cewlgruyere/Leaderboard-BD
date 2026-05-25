@@ -8,18 +8,20 @@ from ballsdex.settings import settings
 from asgiref.sync import sync_to_async
 from ballsdex.core.utils.transformers import (
     BallEnabledTransform,
+    SpecialEnabledTransform
 )
 
 
 
 class component_view(discord.ui.LayoutView):
-    def __init__(self, bot, interaction: discord.Interaction, players, amount: int, users, collectible, economy):
+    def __init__(self, bot, interaction: discord.Interaction, players, amount: int, users, collectible, economy, special):
         super().__init__(timeout=60)
         self.interaction = interaction
         self.players = players
         self.amount = amount
         self.bot = bot
         self.users = users
+        self.special = special
         self.page = 0
         self.pople_per_page = 5
         self.container = discord.ui.Container()
@@ -113,6 +115,13 @@ class component_view(discord.ui.LayoutView):
                                 media=user.display_avatar.url,
                             ),
                         )
+            elif self.special:
+                leaderboard_player_text = discord.ui.Section(
+                            discord.ui.TextDisplay(content=f"{i}. **{user.display_name}**\n{player.ball_count} {self.special} balls"),
+                            accessory=discord.ui.Thumbnail(
+                                media=user.display_avatar.url,
+                            ),
+                        )
             else:
                 leaderboard_player_text = discord.ui.Section(
                             discord.ui.TextDisplay(content=f"{i}. **{user.display_name}**\n{player.ball_count} {settings.plural_collectible_name}"),
@@ -147,7 +156,7 @@ class Leaderboard(commands.Cog):
 
     @app_commands.checks.cooldown(1, 25, key=lambda i: i.user.id)
     @app_commands.command(name="leaderboard", description=f"Shows the top players of {settings.bot_name}!")
-    async def leaderboard(self, interaction: discord.Interaction["BallsDexBot"], economy: bool = False, ephemeral: bool = False, amount: int = 10, collectible: BallEnabledTransform | None = None,):
+    async def leaderboard(self, interaction: discord.Interaction["BallsDexBot"], economy: bool = False, ephemeral: bool = False, amount: int = 10, collectible: BallEnabledTransform | None = None, special: SpecialEnabledTransform | None = None,):
         await interaction.response.defer(ephemeral=ephemeral, thinking=True)
         if economy:
             if not settings.currency_name:
@@ -155,16 +164,22 @@ class Leaderboard(commands.Cog):
                 return
         users = []
         if economy != True:
-            if not collectible:
+            if not collectible and not special:
                 players = await sync_to_async(
                     lambda: list(
                         Player.objects.annotate(ball_count=Count("balls")).order_by("-ball_count")[:amount]
                     )
                 )()
-            else:
+            elif not special:
                 players = await sync_to_async(
                     lambda: list(
                         Player.objects.annotate(ball_count=Count("balls", filter=Q(balls__ball=collectible))).order_by("-ball_count")[:amount]
+                    )
+                )()
+            else:
+                players = await sync_to_async(
+                    lambda: list(
+                        Player.objects.annotate(ball_count=Count("balls", filter=Q(balls__special_id=special.id))).order_by("-ball_count")[:amount]
                     )
                 )()
         else:
@@ -176,13 +191,16 @@ class Leaderboard(commands.Cog):
         if not players:
             await interaction.followup.send("No players found.", ephemeral=True)
             return
-        if economy == True and collectible:
-            await interaction.followup.send("economy and collectible are mutually exclusive", ephemeral=True)
+        if economy == True and (collectible or special):
+            await interaction.followup.send("economy and collectible/special are mutually exclusive", ephemeral=True)
+            return
+        if special and collectible:
+            await interaction.followup.send("collectible and special are mutually exclusive", ephemeral=True)
             return
         for random_ass_var, player in enumerate(players, start=1):
             users.append(self.bot.get_user(player.discord_id) or await self.bot.fetch_user(player.discord_id))
 
-        view = component_view(self.bot, interaction, players, amount, users, collectible, economy)
+        view = component_view(self.bot, interaction, players, amount, users, collectible, economy, special)
         await interaction.followup.send(view=view)
 
 
