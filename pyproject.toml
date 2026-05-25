@@ -1,6 +1,6 @@
 [project]
 name = "leaderboard"
-version = "1.0.2"
+version = "1.0.3"
 
 description = "Leaderboard extension for BallsDex created by gruyere"
 
